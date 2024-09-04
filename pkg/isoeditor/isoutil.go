@@ -12,6 +12,7 @@ import (
 	"github.com/diskfs/go-diskfs/disk"
 	"github.com/diskfs/go-diskfs/filesystem"
 	"github.com/diskfs/go-diskfs/filesystem/iso9660"
+	"github.com/diskfs/go-diskfs/partition/gpt"
 	"github.com/pkg/errors"
 )
 
@@ -100,6 +101,14 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 	}
 
 	d.LogicalBlocksize = 2048
+
+	// Create a partition table on the new file
+	table := &gpt.Table{}
+	err = d.Partition(table)
+	if err != nil {
+		return err
+	}
+
 	fspec := disk.FilesystemSpec{
 		Partition:   0,
 		FSType:      filesystem.TypeISO9660,
