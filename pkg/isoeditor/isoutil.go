@@ -110,10 +110,18 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 		return err
 	}
 
-	d.Table = &mbr.Table{}
+	d.Table = &mbr.Table{
+		Partitions: []*mbr.Partition{
+			&mbr.Partition{
+				Bootable: true,
+				Start:    uint32(2048),
+				Size:     uint32(minISOSize),
+			},
+		},
+	}
 	d.LogicalBlocksize = 2048
 	fspec := disk.FilesystemSpec{
-		Partition:   0,
+		Partition:   1,
 		FSType:      filesystem.TypeISO9660,
 		VolumeLabel: volumeLabel,
 		WorkDir:     workDir,
