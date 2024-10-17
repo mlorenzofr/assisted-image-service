@@ -110,7 +110,7 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 		return err
 	}
 
-	d.Table = &mbr.Table{
+	table := &mbr.Table{
 		Partitions: []*mbr.Partition{
 			&mbr.Partition{
 				Bootable: true,
@@ -119,7 +119,10 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 			},
 		},
 	}
+
 	d.LogicalBlocksize = 2048
+	d.Partition(table)
+
 	fspec := disk.FilesystemSpec{
 		Partition:   1,
 		FSType:      filesystem.TypeISO9660,
@@ -211,7 +214,9 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 	}
 
 	fmt.Println("==== ElTorito info dump ====")
-	fmt.Printf("%+v\n\n\n\n\n\n\n\n\n\n\n\n\n\n", options.ElTorito)
+	fmt.Printf("%+v\n", options.ElTorito)
+	fmt.Printf("%+v\n", options.ElTorito.Entries)
+	fmt.Printf("\n\n\n\n\n")
 	return iso.Finalize(options)
 }
 
