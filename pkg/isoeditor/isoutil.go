@@ -200,6 +200,7 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 		}
 	}
 
+	fmt.Printf("%+v", options.ElTorito)
 	return iso.Finalize(options)
 }
 
