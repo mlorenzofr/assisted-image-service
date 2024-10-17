@@ -15,6 +15,7 @@ import (
 	"github.com/diskfs/go-diskfs/disk"
 	"github.com/diskfs/go-diskfs/filesystem"
 	"github.com/diskfs/go-diskfs/filesystem/iso9660"
+	"github.com/diskfs/go-diskfs/partition/mbr"
 	"github.com/pkg/errors"
 )
 
@@ -109,6 +110,7 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 		return err
 	}
 
+	d.Table = &mbr.Table{}
 	d.LogicalBlocksize = 2048
 	fspec := disk.FilesystemSpec{
 		Partition:   0,
