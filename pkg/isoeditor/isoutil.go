@@ -122,6 +122,10 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 
 	d.LogicalBlocksize = 2048
 	d.Partition(table)
+	fmt.Printf("\n===== Partition table =====")
+	for _, p := range d.Table.GetPartitions() {
+		fmt.Printf("%+v", p)
+	}
 
 	fspec := disk.FilesystemSpec{
 		Partition:   1,
@@ -132,6 +136,11 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 	fs, err := d.CreateFilesystem(fspec)
 	if err != nil {
 		return err
+	}
+
+	fmt.Printf("\n===== Partition table after CreateFilesystem =====")
+	for _, p := range d.Table.GetPartitions() {
+		fmt.Printf("%+v", p)
 	}
 
 	iso, ok := fs.(*iso9660.FileSystem)
@@ -215,7 +224,9 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 
 	fmt.Println("==== ElTorito info dump ====")
 	fmt.Printf("%+v\n", options.ElTorito)
-	fmt.Printf("%+v\n", options.ElTorito.Entries)
+	for _, e := range options.ElTorito.Entries {
+		fmt.Printf("%+v\n", e)
+	}
 	fmt.Printf("\n\n\n\n\n")
 	return iso.Finalize(options)
 }
