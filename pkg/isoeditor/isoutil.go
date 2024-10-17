@@ -15,7 +15,7 @@ import (
 	"github.com/diskfs/go-diskfs/disk"
 	"github.com/diskfs/go-diskfs/filesystem"
 	"github.com/diskfs/go-diskfs/filesystem/iso9660"
-	"github.com/diskfs/go-diskfs/partition/mbr"
+	"github.com/diskfs/go-diskfs/partition/gpt"
 	"github.com/pkg/errors"
 )
 
@@ -110,12 +110,12 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 		return err
 	}
 
-	table := &mbr.Table{
-		Partitions: []*mbr.Partition{
-			&mbr.Partition{
-				Bootable: true,
-				Start:    uint32(2048),
-				Size:     uint32(minISOSize),
+	table := &gpt.Table{
+		Partitions: []*gpt.Partition{
+			&gpt.Partition{
+				Start: uint64(0),
+				Size:  uint64(minISOSize),
+				Type:  gpt.MicrosoftBasicData,
 			},
 		},
 	}
