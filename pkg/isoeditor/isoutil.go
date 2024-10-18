@@ -15,7 +15,7 @@ import (
 	"github.com/diskfs/go-diskfs/disk"
 	"github.com/diskfs/go-diskfs/filesystem"
 	"github.com/diskfs/go-diskfs/filesystem/iso9660"
-	"github.com/diskfs/go-diskfs/partition/gpt"
+	"github.com/diskfs/go-diskfs/partition/mbr"
 	"github.com/pkg/errors"
 )
 
@@ -220,27 +220,29 @@ func CreatePartitionTable(diskPath string) error {
 		return err
 	}
 
-	table := &gpt.Table{
-		Partitions: []*gpt.Partition{
-			&gpt.Partition{
-				Start: uint64(0),
-				Size:  uint64(d.Size),
-				Type:  gpt.MicrosoftBasicData,
+	/*
+		table := &gpt.Table{
+			Partitions: []*gpt.Partition{
+				&gpt.Partition{
+					Start: uint64(0),
+					Size:  uint64(d.Size),
+					Type:  gpt.MicrosoftBasicData,
+				},
+			},
+		}
+	*/
+
+	table := &mbr.Table{
+		Partitions: []*mbr.Partition{
+			&mbr.Partition{
+				Bootable: true,
+				Start:    uint32(0),
+				Size:     uint32(d.Size),
 			},
 		},
 	}
 
-	wErr := d.Partition(table)
-
-	partitions := d.Table.GetPartitions()
-	if partitions != nil {
-		fmt.Printf("\n===== Partition table =====\n")
-		for _, p := range partitions {
-			fmt.Printf("%+v\n", p)
-		}
-	}
-
-	return wErr
+	return d.Partition(table)
 }
 
 // Returns the number of sectors to load for efi boot
