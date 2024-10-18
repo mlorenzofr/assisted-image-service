@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/cavaliercoder/go-cpio"
 	diskfs "github.com/diskfs/go-diskfs"
@@ -122,6 +123,7 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 
 	d.LogicalBlocksize = 2048
 	d.Partition(table)
+	time.Sleep(30 * time.Second)
 	fmt.Printf("\n===== Partition table =====\n")
 	for _, p := range d.Table.GetPartitions() {
 		fmt.Printf("%+v\n", p)
@@ -138,6 +140,7 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 		return err
 	}
 
+	time.Sleep(30 * time.Second)
 	fmt.Printf("\n===== Partition table after CreateFilesystem =====\n")
 	for _, p := range d.Table.GetPartitions() {
 		fmt.Printf("%+v\n", p)
@@ -233,6 +236,7 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 
 	isoFinalize := iso.Finalize(options)
 
+	time.Sleep(60 * time.Second)
 	fmt.Printf("\n===== Partition table after Finalize =====\n")
 	for _, p := range d.Table.GetPartitions() {
 		fmt.Printf("%+v\n", p)
