@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/cavaliercoder/go-cpio"
 	diskfs "github.com/diskfs/go-diskfs"
@@ -110,27 +109,10 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 	if err != nil {
 		return err
 	}
-
-	table := &gpt.Table{
-		Partitions: []*gpt.Partition{
-			&gpt.Partition{
-				Start: uint64(0),
-				Size:  uint64(minISOSize),
-				Type:  gpt.MicrosoftBasicData,
-			},
-		},
-	}
-
 	d.LogicalBlocksize = 2048
-	d.Partition(table)
-	time.Sleep(30 * time.Second)
-	fmt.Printf("\n===== Partition table =====\n")
-	for _, p := range d.Table.GetPartitions() {
-		fmt.Printf("%+v\n", p)
-	}
 
 	fspec := disk.FilesystemSpec{
-		Partition:   1,
+		Partition:   0,
 		FSType:      filesystem.TypeISO9660,
 		VolumeLabel: volumeLabel,
 		WorkDir:     workDir,
@@ -138,12 +120,6 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 	fs, err := d.CreateFilesystem(fspec)
 	if err != nil {
 		return err
-	}
-
-	time.Sleep(30 * time.Second)
-	fmt.Printf("\n===== Partition table after CreateFilesystem =====\n")
-	for _, p := range d.Table.GetPartitions() {
-		fmt.Printf("%+v\n", p)
 	}
 
 	iso, ok := fs.(*iso9660.FileSystem)
@@ -234,15 +210,32 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 		fmt.Printf("\n\n\n\n\n")
 	*/
 
-	isoFinalize := iso.Finalize(options)
+	return iso.Finalize(options)
+}
 
-	time.Sleep(60 * time.Second)
-	fmt.Printf("\n===== Partition table after Finalize =====\n")
+// Create a partition table in the disk passed as argument
+func CreatePartitionTable(diskPath string) error {
+	d, err := diskfs.Open(diskPath)
+	if err != nil {
+		return err
+	}
+
+	table := &gpt.Table{
+		Partitions: []*gpt.Partition{
+			&gpt.Partition{
+				Start: uint64(0),
+				Size:  uint64(d.Size),
+				Type:  gpt.MicrosoftBasicData,
+			},
+		},
+	}
+
+	fmt.Printf("\n===== Partition table =====\n")
 	for _, p := range d.Table.GetPartitions() {
 		fmt.Printf("%+v\n", p)
 	}
 
-	return isoFinalize
+	return d.Partition(table)
 }
 
 // Returns the number of sectors to load for efi boot
