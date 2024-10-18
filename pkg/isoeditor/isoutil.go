@@ -230,12 +230,17 @@ func CreatePartitionTable(diskPath string) error {
 		},
 	}
 
-	fmt.Printf("\n===== Partition table =====\n")
-	for _, p := range d.Table.GetPartitions() {
-		fmt.Printf("%+v\n", p)
+	wErr := d.Partition(table)
+
+	partitions := d.Table.GetPartitions()
+	if partitions != nil {
+		fmt.Printf("\n===== Partition table =====\n")
+		for _, p := range partitions {
+			fmt.Printf("%+v\n", p)
+		}
 	}
 
-	return d.Partition(table)
+	return wErr
 }
 
 // Returns the number of sectors to load for efi boot
