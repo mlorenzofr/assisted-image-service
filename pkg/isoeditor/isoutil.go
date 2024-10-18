@@ -232,12 +232,13 @@ func CreatePartitionTable(diskPath string) error {
 		}
 	*/
 
+	sectors := d.Size / d.LogicalBlocksize / 512
 	table := &mbr.Table{
 		Partitions: []*mbr.Partition{
 			&mbr.Partition{
 				Bootable: true,
 				Start:    uint32(0),
-				Size:     uint32(d.Size),
+				Size:     uint32(sectors),
 			},
 		},
 	}
