@@ -232,7 +232,8 @@ func CreatePartitionTable(diskPath string) error {
 		}
 	*/
 
-	sectors := d.Size / d.LogicalBlocksize / 512
+	// The sector size is 512 bytes
+	sectors := d.Size / 512
 	table := &mbr.Table{
 		Partitions: []*mbr.Partition{
 			&mbr.Partition{
