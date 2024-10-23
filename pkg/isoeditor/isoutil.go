@@ -201,14 +201,12 @@ func Create(outPath string, workDir string, volumeLabel string) error {
 		}
 	}
 
-	/*
-		fmt.Println("==== ElTorito info dump ====")
-		fmt.Printf("%+v\n", options.ElTorito)
-		for _, e := range options.ElTorito.Entries {
-			fmt.Printf("%+v\n", e)
-		}
-		fmt.Printf("\n\n\n\n\n")
-	*/
+	fmt.Println("==== ElTorito info dump ====")
+	fmt.Printf("%+v\n", options.ElTorito)
+	for _, e := range options.ElTorito.Entries {
+		fmt.Printf("%+v\n", e)
+	}
+	fmt.Printf("\n\n\n\n\n")
 
 	return iso.Finalize(options)
 }
